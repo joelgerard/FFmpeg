@@ -513,9 +513,12 @@ static int read_connect(URLContext *s, RTMPContext *rt)
                                  "app", tmpstr, sizeof(tmpstr));
     if (ret)
         av_log(s, AV_LOG_WARNING, "App field not found in connect\n");
-    if (!ret && strcmp(tmpstr, rt->app))
-        av_log(s, AV_LOG_WARNING, "App field don't match up: %s <-> %s\n",
+    if (!ret && strcmp(tmpstr, rt->app)) {
+        av_log(s, AV_LOG_ERROR, "Bad streakey? App field don't match up: %s <-> %s\n",
                tmpstr, rt->app);
+
+        return AVERROR(EIO);
+    }
     ff_rtmp_packet_destroy(&pkt);
 
     // Send Window Acknowledgement Size (as defined in specification)
