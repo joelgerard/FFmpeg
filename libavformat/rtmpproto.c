@@ -511,9 +511,11 @@ static int read_connect(URLContext *s, RTMPContext *rt)
     ret = ff_amf_get_field_value(gbc.buffer,
                                  gbc.buffer + bytestream2_get_bytes_left(&gbc),
                                  "app", tmpstr, sizeof(tmpstr));
-    if (ret)
+    if (ret) {
         av_log(s, AV_LOG_WARNING, "App field not found in connect\n");
-    if (!ret && strcmp(tmpstr, rt->app)) {
+        return AVERROR(EIO);
+    }
+    if (!ret && strcmp(tmpstr, rt->app) != 0) {
         av_log(s, AV_LOG_ERROR, "Bad streakey? App field don't match up: %s <-> %s\n",
                tmpstr, rt->app);
 
