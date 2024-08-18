@@ -1984,9 +1984,11 @@ static int send_invoke_response(URLContext *s, RTMPPacket *pkt)
                 pchar = s->filename;
             }
             pchar++;
-            if (strcmp(pchar, filename))
+            if (strcmp(pchar, filename) != 0) {
                 av_log(s, AV_LOG_WARNING, "Unexpected stream %s, expecting"
                        " %s\n", filename, pchar);
+                return AVERROR_INVALIDDATA;
+            }
         }
         rt->state = STATE_RECEIVING;
     }
